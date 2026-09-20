@@ -44,7 +44,7 @@ The application is designed for a single operational role: **Counter Staff**.
 ![Dashboard](screenshots/dashboard.png.png)
 
 ### SMS Confirmation
-![SMS Confirmation](screenshots/sms-confirmation.jpg,jfjf)
+![SMS Confirmation](screenshots/sms-confirmation.jpg)
 ## Technology Stack
 
 - **Framework:** ASP.NET Core MVC
