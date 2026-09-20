@@ -1,0 +1,424 @@
+﻿@model List<CarTicketBookingSystem.Models.Booking>
+
+@{
+    ViewData["Title"] = "Booking History";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Booking History</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            font-family: Arial, sans-serif;
+            color: #1e293b;
+        }
+
+        .topbar {
+            background: #172554;
+            color: white;
+            padding: 18px 0;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .page-container {
+            max-width: 1400px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+            .page-heading h2 {
+                font-size: 28px;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .page-heading p {
+                color: #64748b;
+                margin: 7px 0 0;
+            }
+
+        .history-card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.07);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+            .table thead th {
+                background: #172554;
+                color: white;
+                padding: 15px 12px;
+                white-space: nowrap;
+                font-size: 13px;
+                border-color: #334155;
+            }
+
+            .table tbody td {
+                padding: 14px 12px;
+                vertical-align: middle;
+                font-size: 14px;
+            }
+
+            .table tbody tr:hover {
+                background: #f8fafc;
+            }
+
+        .ticket-id {
+            color: #2563eb;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .passenger-name {
+            font-weight: 600;
+        }
+
+        .passenger-phone {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .route-name {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .route-arrow {
+            color: #2563eb;
+            padding: 0 5px;
+        }
+
+        .fare {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-confirmed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cancelled {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-cancel {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+            .btn-cancel:hover {
+                background: #b91c1c;
+                color: white;
+            }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+            .empty-state h4 {
+                margin-bottom: 10px;
+                font-weight: 700;
+            }
+
+            .empty-state p {
+                color: #64748b;
+            }
+
+        .footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            padding: 25px 10px;
+        }
+
+        @@media (max-width: 768px) {
+            .page-container {
+                margin-top: 25px;
+                padding: 0 12px;
+            }
+
+            .page-heading h2 {
+                font-size: 23px;
+            }
+
+            .history-card {
+                padding: 15px;
+            }
+
+            .brand {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="topbar">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <h1 class="brand">Car Ticket Booking System</h1>
+
+            <a href="/Home/Index" class="btn btn-light btn-sm">
+                <span class="me-1">←</span> Dashboard
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="page-container">
+
+        <div class="page-heading">
+            <div>
+                <h2>Booking History</h2>
+                <p>View and manage your ticket bookings.</p>
+            </div>
+
+            <a href="/Home/Index" class="btn btn-primary">
+                + Book New Ticket
+            </a>
+        </div>
+
+        <!-- Success Message -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show"
+                 role="alert">
+                @TempData["Success"]
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+            </div>
+        }
+
+        <!-- Error Message -->
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+                @TempData["Error"]
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+            </div>
+        }
+
+        <section class="history-card">
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="empty-state">
+                    <h4>No Bookings Found</h4>
+                    <p>You haven't booked any tickets yet.</p>
+
+                    <a href="/Home/Index" class="btn btn-primary mt-2">
+                        Book Your First Ticket
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h5 class="mb-0 fw-bold">All Bookings</h5>
+
+                    <span class="badge text-bg-primary">
+                        Total: @Model.Count
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Passenger</th>
+                                <th>Route</th>
+                                <th>Seat</th>
+                                <th>Fare</th>
+                                <th>Payment</th>
+                                <th>Booking Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var booking in Model)
+                            {
+                                <tr>
+                                    <!-- Ticket ID -->
+                                    <td class="ticket-id">
+                                        @booking.TicketId
+                                    </td>
+
+                                    <!-- Passenger -->
+                                    <td>
+                                        <div class="passenger-name">
+                                            @booking.PassengerName
+                                        </div>
+
+                                        <div class="passenger-phone">
+                                            @booking.Phone
+                                        </div>
+                                    </td>
+
+                                    <!-- Route -->
+                                    <td>
+                                        <span class="route-name">
+                                            @booking.TravelRoute?.From
+                                        </span>
+
+                                        <span class="route-arrow">→</span>
+
+                                        <span class="route-name">
+                                            @booking.TravelRoute?.To
+                                        </span>
+                                    </td>
+
+                                    <!-- Seat -->
+                                    <td>
+                                        <span class="badge text-bg-light border">
+                                            @booking.SeatNumber
+                                        </span>
+                                    </td>
+
+                                    <!-- Fare -->
+                                    <td class="fare">
+                                        ৳@booking.Fare.ToString("N0")
+                                    </td>
+
+                                    <!-- Payment -->
+                                    <td>
+                                        @booking.PaymentMethod
+                                    </td>
+
+                                    <!-- Booking Date -->
+                                    <td>
+                                        @booking.BookingDate.ToString("dd MMM yyyy")
+                                        <br />
+                                        <small class="text-muted">
+                                            @booking.BookingDate.ToString("hh:mm tt")
+                                        </small>
+                                    </td>
+
+                                    <!-- Status -->
+                                    <td>
+                                        @if (booking.Status == "Confirmed")
+                                        {
+                                            <span class="status-badge status-confirmed">
+                                                Confirmed
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge status-cancelled">
+                                                @booking.Status
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- Action -->
+                                    <td>
+                                        @if (booking.Status == "Confirmed")
+                                        {
+                                            <form asp-controller="Booking"
+                                                  asp-action="Cancel"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@booking.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-cancel">
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Car Ticket Booking System
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,521 @@
+@model List<CarTicketBookingSystem.Models.TravelRoute>
+
+@{
+    ViewData["Title"] = "Car Ticket Booking System";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Car Ticket Booking System</title>
+
+    <link rel="stylesheet"
+          href="~/css/booking.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+    <div style="display:none">@Html.AntiForgeryToken()</div>
+
+    <!-- HEADER -->
+    <header class="topbar">
+        <div class="car-logo">🚘</div>
+
+        <div class="brand">
+            <h1>CAR TICKET BOOKING SYSTEM</h1>
+            <p>
+                Travel Smart <span>|</span>
+                Safe Journey <span>|</span>
+                Better Tomorrow
+            </p>
+        </div>
+
+        <div class="header-right">
+            <div id="currentDate"></div>
+            <p>"Good Trips Create Great Stories"</p>
+            <span class="blue-line"></span>
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <!-- MAIN MENU -->
+        <section class="panel">
+            <div class="panel-heading blue">
+                <span class="heading-icon">▦</span>
+                <h2>1. MAIN MENU</h2>
+            </div>
+
+            <div class="panel-body menu-body">
+
+                <button class="menu-item active" data-target="routes">
+                    <span>1</span> View Available Routes
+                </button>
+
+                <button class="menu-item" data-target="passenger">
+                    <span>2</span> Book Ticket
+                </button>
+
+                <button class="menu-item" data-target="history">
+                    <span>3</span> Today's Bookings
+                </button>
+
+                <button class="menu-item" data-target="cancel">
+                    <span>4</span> Cancel Ticket
+                </button>
+
+                <button class="menu-item" data-target="routes">
+                    <span>5</span> Manage Routes (Admin)
+                </button>
+
+                <button class="menu-item" data-target="exit">
+                    <span>6</span> Exit
+                </button>
+
+                <div class="prompt">
+                    Enter your choice: <b></b>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- AVAILABLE ROUTES -->
+        <section class="panel" id="routes">
+
+            <div class="panel-heading green">
+                <span class="heading-icon">📍</span>
+                <h2>2. AVAILABLE ROUTES</h2>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Fare (BDT)</th>
+                                <th>Travel Time</th>
+                             
+                            </tr>
+                        </thead>
+
+
+                        <tbody>
+                            @foreach (var route in Model)
+                            {
+
+                                <tr class="route-row"
+                                    data-route-id="@route.Id"
+                                    data-route="@($"{route.From} → {route.To}")"
+                                    data-fare="@route.Fare"
+                                    tabindex="0">
+
+                                    <td>@route.Id</td>
+                                    <td>@route.From</td>
+                                    <td>@route.To</td>
+                                    <td>@route.Fare BDT</td>
+                                    <td>@route.TravelTime</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="prompt">
+                    Select a route to view available seats.
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- SEAT SELECTION -->
+        <section class="panel">
+
+            <div class="panel-heading gold">
+                <span class="heading-icon">💺</span>
+                <h2>3. SEAT SELECTION</h2>
+            </div>
+
+            <div class="panel-body seat-body">
+
+                <div class="legend">
+                    <span><i class="available"></i> Available</span>
+                    <span><i class="booked"></i> Booked</span>
+                    <span><i class="selected"></i> Selected</span>
+                </div>
+
+                <div class="front">
+                    ◉<br />
+                    Front
+                </div>
+
+                <div class="seat-map">
+
+
+                    @for (int row = 1; row <= 5; row++)
+                    {
+                        <span class="row-number">@row</span>
+
+                        @for (int col = 0; col < 4; col++)
+                        {
+                            var seat = $"{row}{(char)('A' + col)}";
+
+                            <button type="button"
+                                    class="seat available-seat"
+                                    data-seat="@seat">
+                                @seat
+                            </button>
+                        }
+                    }
+
+                </div>
+
+                <div class="prompt">
+                    Selected seat:
+                    <strong id="selectedSeat">None</strong>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- PASSENGER DETAILS -->
+        <section class="panel" id="passenger">
+
+            <div class="panel-heading light-blue">
+                <span class="heading-icon">♟</span>
+                <h2>4. PASSENGER DETAILS</h2>
+            </div>
+
+            <div class="panel-body passenger-body">
+
+                <div class="form-row">
+                    <label for="passengerName">Name</label>
+                    <span>:</span>
+                    <input id="passengerName"
+                           type="text"
+                           placeholder="Enter passenger name" />
+                </div>
+
+                <div class="form-row">
+                    <label for="phone">Phone</label>
+                    <span>:</span>
+                    <input id="phone"
+                           type="tel"
+                           placeholder="01XXXXXXXXX" />
+                </div>
+
+                <div class="form-row">
+                    <label for="nid">NID</label>
+                    <span>:</span>
+                    <input id="nid"
+                           type="text"
+                           placeholder="Enter NID (optional)" />
+                </div>
+
+                <div class="form-row">
+                    <label for="age">Age</label>
+                    <span>:</span>
+                    <input id="age"
+                           type="number"
+                           min="1"
+                           max="120"
+                           placeholder="Age" />
+                </div>
+
+                <div class="form-row">
+                    <label for="gender">Gender</label>
+                    <span>:</span>
+
+                    <select id="gender">
+                        <option value="">Select gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+
+                <label for="routeInput">Route</label>
+                <input type="text"
+                       id="routeInput"
+                       name="Route"
+                       placeholder="Select or type route" />
+
+                <input type="hidden"
+                       id="selectedRouteId"
+                       name="TravelRouteId" />
+
+                <label for="travelDate">Travel Date</label>
+                <input type="date" id="travelDate" name="TravelDate" />
+
+                <label for="seatInput">Seat No.</label>
+                <input type="text"
+                       id="seatInput"
+                       name="SeatNumber"
+                       placeholder="Select or type seat" />
+
+               
+
+                <div class="prompt">
+                    Enter passenger details to continue.
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- PAYMENT SIMULATION -->
+        <section class="panel">
+
+            <div class="panel-heading purple">
+                <span class="heading-icon">▣</span>
+                <h2>5. PAYMENT SIMULATION</h2>
+            </div>
+
+            <div class="panel-body payment-body">
+
+                <div class="payment-summary">
+                    <p>
+                        Route :
+                        <strong id="paymentRoute">Dhaka → Sylhet</strong>
+                    </p>
+
+                    <p>
+                        Seat :
+                        <strong id="paymentSeat">None</strong>
+                    </p>
+
+                    <p>
+                        Fare :
+                        <strong id="paymentFare">700 BDT</strong>
+                    </p>
+                </div>
+
+                <div class="payment-divider"></div>
+
+                <p class="payment-label">
+                    Select payment method:
+                </p>
+
+                <label class="payment-option">
+                    <input type="radio"
+                           name="payment"
+                           value="bKash"
+                           checked />
+                    1 &nbsp; bKash (Simulation)
+                </label>
+
+                <label class="payment-option">
+                    <input type="radio"
+                           name="payment"
+                           value="Nagad" />
+                    2 &nbsp; Nagad (Simulation)
+                </label>
+
+                <label class="payment-option">
+                    <input type="radio"
+                           name="payment"
+                           value="Card" />
+                    3 &nbsp; Credit/Debit Card (Simulation)
+                </label>
+
+                <label class="payment-option">
+                    <input type="radio"
+                           name="payment"
+                           value="Cash" />
+                    4 &nbsp; Cash (At Counter)
+                </label>
+
+                <button type="button"
+                        class="confirm-btn"
+                        id="confirmBooking">
+                    Confirm Booking
+                </button>
+
+                <div class="prompt">
+                    Payment is simulated. No real money is charged.
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- BOOKING CONFIRMATION -->
+        <section class="panel">
+
+            <div class="panel-heading success">
+                <span class="heading-icon">✔</span>
+                <h2>6. BOOKING CONFIRMATION</h2>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="ticket" id="confirmation">
+
+                    <div class="ticket-title">
+                        🎉 Booking Confirmation
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Ticket ID</span>
+                        <strong id="ticketId">—</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Name</span>
+                        <strong id="ticketName">—</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Route</span>
+                        <strong id="ticketRoute">—</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Seat</span>
+                        <strong id="ticketSeat">—</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Fare</span>
+                        <strong id="ticketFare">—</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Date</span>
+                        <strong id="ticketDate">—</strong>
+                    </div>
+
+                    <div class="ticket-row">
+                        <span>Payment</span>
+                        <strong id="ticketPayment">—</strong>
+                    </div>
+
+                    <p class="ticket-thanks" id="ticketStatus">
+                        Your ticket details will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- BOOKING HISTORY -->
+        <section class="panel" id="history">
+
+            <div class="panel-heading blue">
+                <span class="heading-icon">▤</span>
+                <h2>7. TODAY'S BOOKINGS</h2>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="table-wrap">
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Ticket ID</th>
+                                <th>Route</th>
+                                <th>Seat</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="bookingHistory">
+                            <tr>
+                                <td colspan="6" class="empty-row">
+                                    No bookings yet.
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <div class="prompt">
+                    Bookings made today by route will appear here.
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- CANCEL TICKET -->
+        <section class="panel" id="cancel">
+
+            <div class="panel-heading red">
+                <span class="heading-icon">✖</span>
+                <h2>8. CANCEL TICKET</h2>
+            </div>
+
+            <div class="panel-body cancel-body">
+
+                <label for="cancelTicketId">
+                    Enter your Ticket ID:
+                </label>
+
+                <input id="cancelTicketId"
+                       type="text"
+                       placeholder="e.g. CT123456" />
+
+                <button type="button"
+                        class="cancel-btn"
+                        id="cancelBooking">
+                    Cancel Ticket
+                </button>
+
+                <div id="cancelMessage" class="cancel-message">
+                    Select a ticket from your booking history to cancel.
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- EXIT -->
+        <section class="panel" id="exit">
+
+            <div class="panel-heading gray">
+                <span class="heading-icon">⏻</span>
+                <h2>9. EXIT</h2>
+            </div>
+
+            <div class="panel-body exit-body">
+
+                <div class="exit-car">🚘</div>
+
+                <h2>Thank You!</h2>
+
+                <p>
+                    For Using Car Ticket Booking System
+                </p>
+
+                <span class="blue-line"></span>
+
+                <p>
+                    "Travel More, Discover More"
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script src="~/js/booking.js"
+            asp-append-version="true"></script>
+
+</body>
+</html>
