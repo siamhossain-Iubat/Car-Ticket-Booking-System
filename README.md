@@ -38,7 +38,13 @@ The application is designed for a single operational role: **Counter Staff**.
 - SMS booking confirmation integration using SMS.net.bd API
 
 > SMS delivery depends on valid API configuration, sufficient balance, and provider restrictions.
+## Screenshots
 
+### Counter Staff Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### SMS Confirmation
+![SMS Confirmation](screenshots/sms-confirmation.jpg)
 ## Technology Stack
 
 - **Framework:** ASP.NET Core MVC
